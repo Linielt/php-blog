@@ -1,39 +1,29 @@
 <?php
 require_once "lib/common.php";
+require_once "lib/install.php";
 
-$root = getRootPath();
-$dsn = getDsn();
+// Store data in session so it is not lost
+session_start();
 
-$error = "";
-$sql = file_get_contents($root . "/data/init.sql");
-
-if ($sql === false)
-{
-    $error = "Cannot find SQL file.";
-}
-
-if (!$error)
+// Only run installer when responding to form
+if ($_POST)
 {
     $pdo = getPDO();
-    $result = $pdo->exec($sql);
-    if ($result === false)
-    {
-        $error = "Could not run SQL: " . print_r($pdo->errorInfo(), true);
-    }
-}
-$count = [];
+    list($_SESSION["count"], $_SESSION["error"]) = installBlog($pdo);
 
-foreach(["post", "comment"] as $tableName)
+    redirectAndExit("install.php");
+}
+
+$attempted = false;
+if ($_SESSION)
 {
-    if (!$error)
-    {
-        $sql = "SELECT COUNT(*) AS c FROM " . $tableName;
-        $stmt = $pdo->query($sql);
-        if ($stmt)
-        {
-            $count[$tableName] = $stmt->fetchColumn();
-        }
-    }
+    $attempted = true;
+    $count = $_SESSION["count"];
+    $error = $_SESSION["error"];
+
+    // Report install/failure once per session only.
+    unset($_SESSION["count"]);
+    unset($_SESSION["error"]);
 }
 
 ?>
@@ -47,20 +37,40 @@ foreach(["post", "comment"] as $tableName)
     <link rel="stylesheet" href="./stylesheets/install.css" />
 </head>
 <body>
-<?php if ($error): ?>
-    <div class="error box">
-        <?= $error ?>
-    </div>
-<?php else: ?>
-    <div class="success box">
-        The database and demo data have been created.
-        <?php foreach(["post", "comment"] as $tableName): ?>
-            <?php if (isset($count[$tableName])): ?>
-                <?= $count[$tableName] ?> new
-                <?= $tableName ?>s were created.
+<?php if ($attempted): ?>
+    <?php if ($error): ?>
+        <div class="error box">
+            <?= $error ?>
+        </div>
+    <?php else: ?>
+        <div class="success box">
+            The database and demo data was created with no issues.
+
+            <?php foreach (["post", "comment"] as $tableName): ?>
+                <?php if (isset($count[$tableName])): ?> new
+                    <?= $count[$tableName] ?>
+                    <?= $tableName ?>s
+                    were created.
                 <?php endif ?>
-        <?php endforeach ?>
-    </div>
+            <?php endforeach ?>
+        </div>
+
+    <p>
+        <a href="index.php">View the blog</a>,
+        or <a href="install.php">Install again</a>.
+    </p>
+<?php endif ?>
+
+<?php else: ?>
+    <p>Click the install button to reset the database.</p>
+
+    <form method="post">
+        <input
+            name="install"
+            type="submit"
+            value="install"
+        />
+    </form>
 <?php endif ?>
 </body>
 </html>

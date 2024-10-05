@@ -50,3 +50,21 @@ function getCommentsForPost($postId)
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+function redirectAndExit($script)
+{
+    $relativeUrl = $_SERVER["PHP_SELF"];
+    $urlFolder = substr($relativeUrl, 0, strrpos($relativeUrl, "/") + 1);
+
+    $host = $_SERVER["HTTP_HOST"];
+    $fullUrl = "http://" . $host . $urlFolder . $script;
+    header("Location: " . $fullUrl);
+    exit();
+}
+
+function convertNewLinesToParagraphs($text)
+{
+    $escaped = htmlEscape($text);
+
+    return "<p>" . str_replace("\n", "</p><p>", $escaped) . "</p>";
+}

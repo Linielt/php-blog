@@ -11,6 +11,9 @@ if ($stmt === false)
 {
     throw new Exception("There was a problem with running this query.");
 }
+
+$notFound = isset($_GET['not-found']);
+
 ?>
 
 <!DOCTYPE html>
@@ -25,6 +28,11 @@ if ($stmt === false)
         <?php require("./partials/header.php"); ?>
     </header>
 
+    <?php if ($notFound): ?>
+    <div style="border: 1px solid #ff6666; padding: 6px;">
+        <p>Error: cannot find the requested blog post</p>
+    </div>
+    <?php endif; ?>
     <main>
         <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
         <article>

@@ -1,5 +1,6 @@
 <?php
 require_once ("lib/common.php");
+require_once ("lib/view-post.php");
 
 if (isset($_GET["post_id"]))
 {
@@ -11,26 +12,37 @@ else
 }
 
 $pdo = getPDO();
-$stmt = $pdo->prepare(
-    "SELECT title, created_at, body
-    FROM post
-    WHERE id = :id"
-);
-if ($stmt === false)
+$row = getPostRow($pdo, $postId);
+
+if (!$row)
 {
-    throw new Exception("There was a problem preparing this query.");
-}
-$result = $stmt->execute(["id" => $postId]);
-if ($result === false)
-{
-    throw new Exception("There was a problem running this query.");
+    redirectAndExit("error.php");
 }
 
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$errors = null;
+if ($_POST)
+{
+    $commentData = [
+            "name" => $_POST["comment-name"],
+            "website" => $_POST["comment-website"],
+            "text" => $_POST["comment-text"],
+    ];
+    $errors = addCommentToPost($pdo, $postId, $commentData);
 
-// Swaps carriage returns for paragraph breaks.
-$bodyText = htmlEscape($row['body']);
-$paraText = str_replace("\n", "</p><p>", $bodyText);
+    if (!$errors)
+    {
+        redirectAndExit("view-post.php?post_id=" . $postId);
+    }
+}
+else
+{
+    $commentData = [
+        "name" => "",
+        "website" => "",
+        "text" => "",
+    ];
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,7 +67,7 @@ $paraText = str_replace("\n", "</p><p>", $bodyText);
         <?= htmlEscape($row["created_at"]) ?>
     </div>
     <p>
-        <?= $paraText ?>
+        <?= convertNewLinesToParagraphs($row["body"])?>
     </p>
 
     <h3><?= countCommentsForPost($postId) ?> comments</h3>
@@ -70,10 +82,12 @@ $paraText = str_replace("\n", "</p><p>", $bodyText);
                 <?= htmlEscape($comment["created_at"]) ?>
             </div>
         <div class="comment-body">
-            <?= htmlEscape($comment["text"]) ?>
+            <?= convertNewLinesToParagraphs($comment["text"]) ?>
         </div>
         </div>
     <?php endforeach; ?>
 </article>
+
+<?php require("./partials/comment-form.php"); ?>
 </body>
 </html>
