@@ -68,3 +68,41 @@ function convertNewLinesToParagraphs($text)
 
     return "<p>" . str_replace("\n", "</p><p>", $escaped) . "</p>";
 }
+
+function tryLogin(PDO $pdo, $username, $password)
+{
+    $sql = "
+    SELECT password
+    FROM user
+    WHERE username = :username
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(["username" => $username]);
+
+    $hash = $stmt->fetchColumn();
+    $success = password_verify($password, $hash);
+
+    return $success;
+}
+
+function login($username)
+{
+    session_regenerate_id();
+
+    $_SESSION['logged_in_username'] = $username;
+}
+
+function isLoggedIn()
+{
+    return isset($_SESSION['logged_in_username']);
+}
+
+function logout()
+{
+    unset($_SESSION['logged_in_username']);
+}
+
+function getAuthUser()
+{
+    return isLoggedIn() ? $_SESSION['logged_in_username'] : null;
+}

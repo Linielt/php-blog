@@ -1,6 +1,8 @@
 <?php
 require_once ("lib/common.php");
 
+session_start();
+
 $pdo = getPDO();
 $stmt = $pdo->query(
         "SELECT id, title, created_at, body

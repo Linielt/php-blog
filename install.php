@@ -9,21 +9,40 @@ session_start();
 if ($_POST)
 {
     $pdo = getPDO();
-    list($_SESSION["count"], $_SESSION["error"]) = installBlog($pdo);
+    list($rowCounts, $error) = installBlog($pdo);
+
+    $password = "";
+    if (!$error)
+    {
+        $username = "admin";
+        list($password, $error) = createUser($pdo, $username);
+    }
+
+    $_SESSION["count"] = $rowCounts;
+    $_SESSION["error"] = $error;
+    $_SESSION["username"] = $username;
+    $_SESSION["password"] = $password;
+    $_SESSION["try_install"] = true;
+
 
     redirectAndExit("install.php");
 }
 
 $attempted = false;
-if ($_SESSION)
+if (isset($_SESSION["try_install"]))
 {
     $attempted = true;
     $count = $_SESSION["count"];
     $error = $_SESSION["error"];
+    $username = $_SESSION["username"];
+    $password = $_SESSION["password"];
 
     // Report install/failure once per session only.
     unset($_SESSION["count"]);
     unset($_SESSION["error"]);
+    unset($_SESSION["username"]);
+    unset($_SESSION["password"]);
+    unset($_SESSION["try_install"]);
 }
 
 ?>
@@ -55,6 +74,10 @@ if ($_SESSION)
             <?php endforeach ?>
         </div>
 
+        <p>
+            The new <?= htmlEscape($username)?> password is
+            <span style="font-size: 1.2em;"><?= htmlEscape($password)?></span>
+        </p>
     <p>
         <a href="index.php">View the blog</a>,
         or <a href="install.php">Install again</a>.

@@ -57,5 +57,14 @@ VALUES
      "John",
      "http://example.com",
      "Hello, I am John!"
-    )
-;
+    );
+
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE user (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    username VARCHAR(45) NOT NULL,
+    password VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    is_enabled BOOLEAN NOT NULL DEFAULT true
+);
