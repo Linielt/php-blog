@@ -1,43 +1,20 @@
 <?php
 $root = realpath(__DIR__);
-$database = $root . "/data/data.sqlite";
-// These can be changed according to your database settings
-$host = "127.0.0.1";
-$db = "blog";
-$username = "root";
-$pass = "";
+$configs = include("config.php");
 $charset = "utf8mb4";
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
+$dsn = "mysql:host={$configs["host"]};dbname={$configs["db"]};charset=$charset";
+
 $error = "";
-if (is_readable($database) && filesize($database) > 0)
+$sql = file_get_contents($root . "/data/init.sql");
+
+if ($sql === false)
 {
-    $error = "Please delete the existing database manually before doing a fresh install";
+    $error = "Cannot find SQL file.";
 }
+
 if (!$error)
 {
-    $createdOk = @touch($database);
-    if (!$createdOk)
-    {
-        $error = sprintf("Unable to create the database, please allow the server to create new files in \'%s\'",
-            dirname($database));
-    }
-}
-if (!$error)
-{
-    $sql = file_get_contents($root . "/data/init.sql");
-    if ($sql === false)
-    {
-        $error = "Cannot find SQL file.";
-    }
-}
-if (!$error)
-{
-    $pdo = new PDO($dsn, $username, $pass, $options);
+    $pdo = new PDO($dsn, $configs["username"], $configs["pass"], $configs["options"]);
     $result = $pdo->exec($sql);
     if ($result === false)
     {
