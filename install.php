@@ -1,8 +1,8 @@
 <?php
-$root = realpath(__DIR__);
-$configs = include("config.php");
-$charset = "utf8mb4";
-$dsn = "mysql:host={$configs["host"]};dbname={$configs["db"]};charset=$charset";
+require_once "lib/common.php";
+
+$root = getRootPath();
+$dsn = getDsn();
 
 $error = "";
 $sql = file_get_contents($root . "/data/init.sql");
@@ -14,7 +14,7 @@ if ($sql === false)
 
 if (!$error)
 {
-    $pdo = new PDO($dsn, $configs["username"], $configs["pass"], $configs["options"]);
+    $pdo = getPDO();
     $result = $pdo->exec($sql);
     if ($result === false)
     {
@@ -39,19 +39,7 @@ if (!$error)
     <meta http-equiv="Content-Type" content="text/html" />
     <title>Blog Installer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        .box {
-            border: 1px dotted silver;
-            border-radius: 5px;
-            padding: 4px;
-        }
-        .error {
-            background-color: #ff6666;
-        }
-        .success {
-            background-color: #88ff88;
-        }
-    </style>
+    <link rel="stylesheet" href="./stylesheets/install.css" />
 </head>
 <body>
 <?php if ($error): ?>

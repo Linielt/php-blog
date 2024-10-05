@@ -1,3 +1,18 @@
+<?php
+require_once ("lib/common.php");
+
+$pdo = getPDO();
+$stmt = $pdo->query(
+        "SELECT id, title, created_at, body
+        FROM post
+        ORDER BY created_at DESC"
+);
+if ($stmt === false)
+{
+    throw new Exception("There was a problem with running this query.");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,21 +22,26 @@
     </head>
 <body>
     <header>
-        <h1>A Basic Blog</h1>
-        <p>A summary paragraph about what this blog is about.</p>
+        <?php require("./partials/header.php"); ?>
     </header>
 
     <main>
-        <?php for ($postId = 1; $postId <= 4; $postId++) : ?>
-            <article>
-                <h2>Article <?= $postId ?> Title</h2>
-                <div>dd MON YYYY</div>
-                <p>A summary paragraph about Article <?= $postId ?>.</p>
-                <p>
-                    <a href="#">Read more...</a>
-                </p>
-            </article>
-        <?php endfor ?>
+        <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
+        <article>
+            <h2>
+                <?= htmlEscape($row['title']) ?>
+            </h2>
+            <div>
+                <?= htmlEscape($row['created_at']) ?>
+            </div>
+            <p>
+                <?= htmlEscape($row['body']) ?>
+            </p>
+            <p>
+                <a href="view-post.php?post_id=<?= $row["id"] ?>">Read more...</a>
+            </p>
+        </article>
+        <?php endwhile; ?>
     </main>
 </body>
 </html>

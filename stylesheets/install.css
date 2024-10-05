@@ -1,0 +1,11 @@
+.box {
+    border: 1px dotted silver;
+    border-radius: 5px;
+    padding: 4px;
+}
+.error {
+    background-color: #ff6666;
+}
+.success {
+    background-color: #88ff88;
+}
