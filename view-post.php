@@ -27,35 +27,53 @@ if ($result === false)
 }
 
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Swaps carriage returns for paragraph breaks.
+$bodyText = htmlEscape($row['body']);
+$paraText = str_replace("\n", "</p><p>", $bodyText);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="Content-Type" content="text/html" />
-        <title>
-            A Basic Blog | <?= htmlspecialchars($row["title"], ENT_HTML5, "UTF-8") ?>
-        </title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
-    <header>
-        <?php require("./partials/header.php"); ?>
-    </header>
-
-    <article>
-        <h2>
-            <?= htmlEscape($row["title"]) ?>
-        </h2>
-        <div>
-            <?= htmlEscape($row["created_at"]) ?>
-        </div>
-        <p>
-            <?= htmlspecialchars($row["body"], ENT_HTML5, "UTF-8") ?>
-        </p>
-    </article>
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html" />
+    <title>
+        A Basic Blog | <?= htmlspecialchars($row["title"], ENT_HTML5, "UTF-8") ?>
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 <body>
+<header>
+    <?php require("./partials/header.php"); ?>
+</header>
 
+<article>
+    <h2>
+        <?= htmlEscape($row["title"]) ?>
+    </h2>
+    <div>
+        <?= htmlEscape($row["created_at"]) ?>
+    </div>
+    <p>
+        <?= $paraText ?>
+    </p>
+
+    <h3><?= countCommentsForPost($postId) ?> comments</h3>
+
+    <?php foreach (getCommentsForPost($postId) as $comment): ?>
+        <hr />
+        <div class="comment">
+            <div class="comment-metadata">
+                Comment from
+                <?= htmlEscape($comment["name"]) ?>
+                on
+                <?= htmlEscape($comment["created_at"]) ?>
+            </div>
+        <div class="comment-body">
+            <?= htmlEscape($comment["text"]) ?>
+        </div>
+        </div>
+    <?php endforeach; ?>
+</article>
 </body>
 </html>

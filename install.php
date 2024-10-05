@@ -21,16 +21,21 @@ if (!$error)
         $error = "Could not run SQL: " . print_r($pdo->errorInfo(), true);
     }
 }
-$count = null;
-if (!$error)
+$count = [];
+
+foreach(["post", "comment"] as $tableName)
 {
-    $sql = "SELECT COUNT(*) AS c FROM post";
-    $stmt = $pdo->query($sql);
-    if ($stmt)
+    if (!$error)
     {
-        $count = $stmt->fetchColumn();
+        $sql = "SELECT COUNT(*) AS c FROM " . $tableName;
+        $stmt = $pdo->query($sql);
+        if ($stmt)
+        {
+            $count[$tableName] = $stmt->fetchColumn();
+        }
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,9 +54,12 @@ if (!$error)
 <?php else: ?>
     <div class="success box">
         The database and demo data have been created.
-        <?php if ($count): ?>
-            <?= $count ?> new posts were created.
-        <?php endif ?>
+        <?php foreach(["post", "comment"] as $tableName): ?>
+            <?php if (isset($count[$tableName])): ?>
+                <?= $count[$tableName] ?> new
+                <?= $tableName ?>s were created.
+                <?php endif ?>
+        <?php endforeach ?>
     </div>
 <?php endif ?>
 </body>

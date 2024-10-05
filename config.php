@@ -4,7 +4,7 @@ return [
     "host" => "127.0.0.1",
     "port" => "3306",
     "username" => "root",
-    "pass" => "",
+    "pass" => "the_admin_01",
     "db" => "blog",
     "options" => [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
