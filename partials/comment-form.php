@@ -1,8 +1,7 @@
 <?php ?>
-<hr />
 
 <?php if ($errors): ?>
-    <div style="border: 1px solid #ff6666; padding: 6px;">
+    <div class="error box comment-margin">
         <ul>
         <?php foreach ($errors as $error): ?>
             <li><?= $error ?></li>
@@ -13,8 +12,8 @@
 
 <h3>Add your comment</h3>
 
-<form method="post">
-    <p>
+<form method="post" class="comment-form">
+    <div>
         <label for="comment-name">Name:</label>
         <div>
             <input
@@ -24,8 +23,8 @@
                 value="<?= htmlEscape($commentData["name"]) ?>"
                 required />
         </div>
-    </p>
-    <p>
+    </div>
+    <div>
         <label for="comment-website">Website:</label>
         <div>
             <input type="text"
@@ -35,8 +34,8 @@
                    required
             />
         </div>
-    </p>
-    <p>
+    </div>
+    <div>
         <label for="comment-text">Comment:</label>
         <div>
         <textarea id="comment-text"
@@ -47,7 +46,9 @@
             <?= htmlEscape($commentData["text"])?>
         </textarea>
         </div>
-    </p>
+    </div>
 
-    <input type="submit" value="Submit comment" />
+    <div>
+        <input type="submit" value="Submit comment" />
+    </div>
 </form>

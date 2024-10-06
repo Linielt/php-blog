@@ -26,9 +26,8 @@ if ($_POST)
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
     <title>A Basic Blog | Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php require "partials/head.php" ?>
 </head>
 <body>
     <header>
@@ -36,7 +35,7 @@ if ($_POST)
     </header>
 
     <?php if ($username): ?>
-        <div style="border: 1px solid #ff6666; padding: 6px">
+        <div class="error box">
             The username or password is incorrect, try again
         </div>
     <?php endif ?>

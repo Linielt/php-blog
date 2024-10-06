@@ -47,47 +47,46 @@ else
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html" />
     <title>
         A Basic Blog | <?= htmlspecialchars($row["title"], ENT_HTML5, "UTF-8") ?>
     </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php require "partials/head.php" ?>
 </head>
 <body>
-<header>
-    <?php require("./partials/header.php"); ?>
-</header>
+    <header>
+        <?php require("./partials/header.php"); ?>
+    </header>
 
-<article>
-    <h2>
-        <?= htmlEscape($row["title"]) ?>
-    </h2>
-    <div>
-        <?= htmlEscape($row["created_at"]) ?>
-    </div>
-    <p>
-        <?= convertNewLinesToParagraphs($row["body"])?>
-    </p>
-
-    <h3><?= countCommentsForPost($postId) ?> comments</h3>
-
-    <?php foreach (getCommentsForPost($postId) as $comment): ?>
-        <hr />
-        <div class="comment">
-            <div class="comment-metadata">
-                Comment from
-                <?= htmlEscape($comment["name"]) ?>
-                on
-                <?= htmlEscape($comment["created_at"]) ?>
-            </div>
-        <div class="comment-body">
-            <?= convertNewLinesToParagraphs($comment["text"]) ?>
+    <article class="post">
+        <h2>
+            <?= htmlEscape($row["title"]) ?>
+        </h2>
+        <div class="date">
+            <?= htmlEscape($row["created_at"]) ?>
         </div>
-        </div>
-    <?php endforeach; ?>
-</article>
+        <p>
+            <?= convertNewLinesToParagraphs($row["body"])?>
+        </p>
 
-<?php require("./partials/comment-form.php"); ?>
+        <section class="comment-list">
+            <h3><?= countCommentsForPost($pdo, $postId) ?> comments</h3>
+
+            <?php foreach (getCommentsForPost($pdo, $postId) as $comment): ?>
+                <div class="comment">
+                    <div class="comment-metadata">
+                        Comment from
+                        <?= htmlEscape($comment["name"]) ?>
+                        on
+                        <?= htmlEscape($comment["created_at"]) ?>
+                    </div>
+                    <div class="comment-body">
+                        <?= convertNewLinesToParagraphs($comment["text"]) ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </section>
+    </article>
+
+    <?php require("./partials/comment-form.php"); ?>
 </body>
 </html>

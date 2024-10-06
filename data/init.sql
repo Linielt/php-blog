@@ -1,12 +1,32 @@
-DROP TABLE IF EXISTS post;
-CREATE TABLE post (
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE user (
                       id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-                      title VARCHAR(255) NOT NULL,
-                      body TEXT NOT NULL,
-                      user_id INTEGER NOT NULL,
-                      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                      username VARCHAR(45) NOT NULL,
+                      password VARCHAR(64) NOT NULL,
+                      created_at TIMESTAMP NOT NULL,
+                      is_enabled BOOLEAN NOT NULL DEFAULT true
 );
+
+INSERT INTO user (username, password, created_at, is_enabled)
+VALUES
+(
+    "admin", "unhashed-password", CURRENT_TIMESTAMP, true
+);
+
+
+DROP TABLE IF EXISTS post;
+
+CREATE TABLE post (
+        id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        body TEXT NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
 INSERT INTO post
 (
     title, body, user_id, created_at
@@ -46,7 +66,8 @@ CREATE TABLE comment (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     name VARCHAR(45) NOT NULL,
     website VARCHAR(255) NOT NULL,
-    text VARCHAR(500) NOT NULL
+    text VARCHAR(500) NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
 INSERT INTO comment (post_id, created_at, name, website, text)
@@ -57,14 +78,4 @@ VALUES
      "John",
      "http://example.com",
      "Hello, I am John!"
-    );
-
-DROP TABLE IF EXISTS user;
-
-CREATE TABLE user (
-    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    username VARCHAR(45) NOT NULL,
-    password VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    is_enabled BOOLEAN NOT NULL DEFAULT true
 );

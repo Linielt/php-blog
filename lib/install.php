@@ -53,13 +53,14 @@ function createUser(PDO $pdo, $username, $length = 10)
 
     $error = "";
     $sql = "
-    INSERT INTO user (username, password, created_at)
-    VALUES (:username, :password, :created_at)
+    UPDATE user
+    SET password = :password, created_at = :created_at, is_enabled = true
+    WHERE username = :username
     ";
     $stmt = $pdo->prepare($sql);
     if ($stmt === false)
     {
-        $error = "Could not prepare user creation";
+        $error = "Could not prepare user update";
     }
 
     if (!$error)
@@ -81,7 +82,7 @@ function createUser(PDO $pdo, $username, $length = 10)
         );
         if ($result === false)
         {
-            $error = "Could not execute user creation";
+            $error = "Could not execute password update";
         }
     }
 

@@ -21,9 +21,8 @@ $notFound = isset($_GET['not-found']);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
     <title>A Basic Blog</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php require "partials/head.php"; ?>
 </head>
 <body>
     <header>
@@ -31,28 +30,28 @@ $notFound = isset($_GET['not-found']);
     </header>
 
     <?php if ($notFound): ?>
-    <div style="border: 1px solid #ff6666; padding: 6px;">
+    <div class="error box"">
         <p>Error: cannot find the requested blog post</p>
     </div>
     <?php endif; ?>
-    <main>
+    <main class="post-list">
         <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
-        <article>
+        <section class="post-synopsis">
             <h2>
                 <?= htmlEscape($row['title']) ?>
             </h2>
-            <div>
+            <div class="meta">
                 <?= htmlEscape($row['created_at']) ?>
 
-                (<?= countCommentsForPost($row['id']) ?> comments)
+                (<?= countCommentsForPost($pdo ,$row['id']) ?> comments)
             </div>
             <p>
                 <?= htmlEscape($row['body']) ?>
             </p>
-            <p>
+            <div class="read-more">
                 <a href="view-post.php?post_id=<?= $row["id"] ?>">Read more...</a>
-            </p>
-        </article>
+            </div>
+        </section>
         <?php endwhile; ?>
     </main>
 </body>

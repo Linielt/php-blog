@@ -22,9 +22,8 @@ function htmlEscape($html)
     return htmlspecialchars($html, ENT_HTML5, "UTF-8");
 }
 
-function countCommentsForPost($postId)
+function countCommentsForPost(PDO $pdo, $postId)
 {
-    $pdo = getPDO();
     $sql = "
     SELECT COUNT(*) AS c
     FROM comment
@@ -37,9 +36,8 @@ function countCommentsForPost($postId)
     return (int) $stmt->fetchColumn();
 }
 
-function getCommentsForPost($postId)
+function getCommentsForPost(PDO $pdo, $postId)
 {
-    $pdo = getPDO();
     $sql = "
     SELECT id, name, text, created_at, website
     FROM comment

@@ -49,11 +49,8 @@ if (isset($_SESSION["try_install"]))
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html" />
     <title>Blog Installer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="./stylesheets/install.css" />
+    <?php require "partials/head.php" ?>
 </head>
 <body>
 <?php if ($attempted): ?>
@@ -76,7 +73,7 @@ if (isset($_SESSION["try_install"]))
 
         <p>
             The new <?= htmlEscape($username)?> password is
-            <span style="font-size: 1.2em;"><?= htmlEscape($password)?></span>
+            <span class="install-password"><?= htmlEscape($password)?></span>
         </p>
     <p>
         <a href="index.php">View the blog</a>,
