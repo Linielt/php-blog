@@ -104,3 +104,21 @@ function getAuthUser()
 {
     return isLoggedIn() ? $_SESSION['logged_in_username'] : null;
 }
+
+function getAuthUserId(PDO $pdo)
+{
+    if (!isLoggedIn())
+    {
+        return null;
+    }
+
+    $sql = "
+    SELECT id
+    FROM user
+    WHERE username = :username
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(["username" => getAuthUser()]);
+
+    return $stmt->fetchColumn();
+}

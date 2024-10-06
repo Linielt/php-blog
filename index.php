@@ -48,8 +48,12 @@ $notFound = isset($_GET['not-found']);
             <p>
                 <?= htmlEscape($row['body']) ?>
             </p>
-            <div class="read-more">
+            <div class="post-controls">
                 <a href="view-post.php?post_id=<?= $row["id"] ?>">Read more...</a>
+                <?php if (isLoggedIn()): ?>
+                    |
+                    <a href="edit-post.php?post_id=<?= $row["id"] ?>">Edit</a>
+                <?php endif; ?>
             </div>
         </section>
         <?php endwhile; ?>
