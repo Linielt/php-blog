@@ -74,10 +74,11 @@ function createUser(PDO $pdo, $username, $length = 10)
 
     if (!$error)
     {
+        $date = new DateTime(timezone: new DateTimeZone("UTC"));
         $result = $stmt->execute([
             "username" => $username,
             "password" => $hash,
-            "created_at" => date('Y-m-d H:i:s')
+            "created_at" => $date->format("Y-m-d H:i:s")
         ]
         );
         if ($result === false)

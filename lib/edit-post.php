@@ -12,11 +12,13 @@ function addPost(PDO $pdo, $title, $body, $userId)
         throw new Exception("Could not prepare post insertion query.");
     }
 
+    $date = new DateTime(timeZone: new DateTimeZone("UTC"));
+
     $result = $stmt->execute([
         ":title" => $title,
         ":body" => $body,
         ":user_id" => $userId,
-        ":created_at" => date("Y-m-d H:i:s")
+        ":created_at" => $date->format('Y-m-d H:i:s')
     ]);
     if ($result === false)
     {

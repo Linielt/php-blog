@@ -50,7 +50,8 @@ function addCommentToPost(PDO $pdo, $postId, array $commentData)
             throw new Exception("Cannot prepare comment insertion statement.");
         }
 
-        $createdTimestamp = date("Y-m-d H:i:s");
+        $date = new DateTime(timeZone: new DateTimeZone("UTC"));
+        $createdTimestamp = $date->format("Y-m-d H:i:s");
 
         $result = $stmt->execute(array_merge($commentData, ["post_id" => $postId, "created_at" => $createdTimestamp]));
 

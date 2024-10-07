@@ -4,15 +4,7 @@ require_once ("lib/common.php");
 session_start();
 
 $pdo = getPDO();
-$stmt = $pdo->query(
-        "SELECT id, title, created_at, body
-        FROM post
-        ORDER BY created_at DESC"
-);
-if ($stmt === false)
-{
-    throw new Exception("There was a problem with running this query.");
-}
+$posts = getAllPosts($pdo);
 
 $notFound = isset($_GET['not-found']);
 
@@ -35,28 +27,28 @@ $notFound = isset($_GET['not-found']);
     </div>
     <?php endif; ?>
     <main class="post-list">
-        <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
-        <section class="post-synopsis">
-            <h2>
-                <?= htmlEscape($row['title']) ?>
-            </h2>
-            <div class="meta">
-                <?= htmlEscape($row['created_at']) ?>
+        <?php foreach ($posts as $post): ?>
+            <section class="post-synopsis">
+                <h2>
+                    <?= htmlEscape($post['title']) ?>
+                </h2>
+                <div class="meta">
+                    <?= htmlEscape($post['created_at']) ?>
 
-                (<?= countCommentsForPost($pdo ,$row['id']) ?> comments)
-            </div>
-            <p>
-                <?= htmlEscape($row['body']) ?>
-            </p>
-            <div class="post-controls">
-                <a href="view-post.php?post_id=<?= $row["id"] ?>">Read more...</a>
-                <?php if (isLoggedIn()): ?>
-                    |
-                    <a href="edit-post.php?post_id=<?= $row["id"] ?>">Edit</a>
-                <?php endif; ?>
-            </div>
-        </section>
-        <?php endwhile; ?>
+                (<?= countCommentsForPost($pdo ,$post['id']) ?> comments)
+                </div>
+                <p>
+                    <?= htmlEscape($post['body']) ?>
+                </p>
+                <div class="post-controls">
+                    <a href="view-post.php?post_id=<?= $post["id"] ?>">Read more...</a>
+                    <?php if (isLoggedIn()): ?>
+                        |
+                        <a href="edit-post.php?post_id=<?= $post["id"] ?>">Edit</a>
+                    <?php endif; ?>
+                </div>
+            </section>
+        <?php endforeach ?>
     </main>
 </body>
 </html>
