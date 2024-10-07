@@ -48,10 +48,19 @@ if ($_POST)
         <p>Login here:</p>
 
         <form method="post">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" value="<?= htmlEscape($username)?>" />
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" />
+            <div>
+                <label for="username">Username:</label>
+                <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="<?= htmlEscape($username)?>"
+                />
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" />
+            </div>
             <input type="submit" name="submit" value="Login" />
         </form>
     </main>

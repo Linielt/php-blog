@@ -22,20 +22,6 @@ function htmlEscape($html)
     return htmlspecialchars($html, ENT_HTML5, "UTF-8");
 }
 
-function countCommentsForPost(PDO $pdo, $postId)
-{
-    $sql = "
-    SELECT COUNT(*) AS c
-    FROM comment
-    WHERE post_id = :postId
-    ";
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(["postId" => $postId]);
-
-    return (int) $stmt->fetchColumn();
-}
-
 function getCommentsForPost(PDO $pdo, $postId)
 {
     $sql = "
@@ -73,6 +59,7 @@ function tryLogin(PDO $pdo, $username, $password)
     SELECT password
     FROM user
     WHERE username = :username
+    AND is_enabled = 1
     ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(["username" => $username]);
@@ -116,6 +103,7 @@ function getAuthUserId(PDO $pdo)
     SELECT id
     FROM user
     WHERE username = :username
+    AND is_enabled = 1;
     ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(["username" => getAuthUser()]);
@@ -126,7 +114,8 @@ function getAuthUserId(PDO $pdo)
 function getAllPosts(PDO $pdo)
 {
     $stmt = $pdo->query(
-        "SELECT id, title, created_at, body
+        "SELECT id, title, created_at, body,
+              (SELECT COUNT(*) FROM comment WHERE comment.post_id = post.id) comment_count
         FROM post
         ORDER BY created_at DESC"
     );

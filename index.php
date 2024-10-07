@@ -35,7 +35,7 @@ $notFound = isset($_GET['not-found']);
                 <div class="meta">
                     <?= htmlEscape($post['created_at']) ?>
 
-                (<?= countCommentsForPost($pdo ,$post['id']) ?> comments)
+                    (<?= $post['comment_count'] ?> comments)
                 </div>
                 <p>
                     <?= htmlEscape($post['body']) ?>

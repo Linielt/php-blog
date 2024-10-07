@@ -2,17 +2,32 @@
 
 function deletePost(PDO $pdo, $postId)
 {
-    $sql = "
-    DELETE FROM post
-    WHERE id = :id
-    ";
-    $stmt = $pdo->prepare($sql);
-    if ($stmt === false)
-    {
-        throw new Exception("There was an error while preparing this query.");
-    }
+    $sqls = [
+        "
+        DELETE FROM comment
+        WHERE post_id = :id
+        ",
+        "
+        DELETE FROM post
+        WHERE id = :id
+        "
+    ];
 
-    $result = $stmt->execute([":id" => $postId]);
+    foreach($sqls as $sql)
+    {
+        $stmt = $pdo->prepare($sql);
+        if ($stmt === false)
+        {
+            throw new Exception("There was an error preparing the query");
+        }
+
+        $result = $stmt->execute([":id" => $postId]);
+
+        if ($result === false)
+        {
+            break;
+        }
+    }
 
     return $result !== false;
 }

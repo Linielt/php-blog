@@ -5,7 +5,7 @@
     method="post"
     class="comment-list"
 >
-    <h3><?= countCommentsForPost($pdo, $postId) ?> comments</h3>
+    <h3><?= $commentCount ?> comments</h3>
 
     <?php foreach (getCommentsForPost($pdo, $postId) as $comment) : ?>
         <div class="comment">
