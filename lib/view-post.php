@@ -50,7 +50,7 @@ function addCommentToPost(PDO $pdo, $postId, array $commentData)
             throw new Exception("Cannot prepare comment insertion statement.");
         }
 
-        $date = new DateTime(timeZone: new DateTimeZone("UTC"));
+        $date = new DateTime(timezone: new DateTimeZone("UTC"));
         $createdTimestamp = $date->format("Y-m-d H:i:s");
 
         $result = $stmt->execute(array_merge($commentData, ["post_id" => $postId, "created_at" => $createdTimestamp]));
@@ -66,4 +66,48 @@ function addCommentToPost(PDO $pdo, $postId, array $commentData)
     }
 
     return $errors;
+}
+
+function handleAddComment(PDO $pdo, $postId, array $commentData)
+{
+    $errors = addCommentToPost($pdo, $postId, $commentData);
+
+    if (!$errors)
+    {
+        redirectAndExit("view-post.php?post_id=" . $postId);
+    }
+
+    return $errors;
+}
+
+function deleteComment(PDO $pdo, $postId, $commentId)
+{
+    $sql = "
+    DELETE FROM comment
+    WHERE post_id = :post_id 
+    AND id = :comment_id
+    ";
+    $stmt = $pdo->prepare($sql);
+    if ($stmt === false)
+    {
+        throw new Exception("There was a problem preparing this query.");
+    }
+
+    $result = $stmt->execute([":post_id" => $postId, ":comment_id" => $commentId]);
+
+    return $result !== false;
+}
+
+function handleDeleteComment(PDO $pdo, $postId, array $deleteResponse)
+{
+    if (isLoggedIn())
+    {
+        $keys = array_keys($deleteResponse);
+        $deleteCommentId = $keys[0];
+        if ($deleteCommentId)
+        {
+            deleteComment($pdo, $postId, $deleteCommentId);
+        }
+        redirectAndExit("view-post.php?post_id=" . $postId);
+    }
 }

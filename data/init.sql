@@ -24,7 +24,7 @@ CREATE TABLE post (
         user_id INTEGER NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES user(id)
+        FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
 INSERT INTO post
@@ -67,7 +67,7 @@ CREATE TABLE comment (
     name VARCHAR(45) NOT NULL,
     website VARCHAR(255) NOT NULL,
     text VARCHAR(500) NOT NULL,
-    FOREIGN KEY (post_id) REFERENCES post(id)
+    FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE
 );
 
 INSERT INTO comment (post_id, created_at, name, website, text)
